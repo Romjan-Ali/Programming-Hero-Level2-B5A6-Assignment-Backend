@@ -26,7 +26,7 @@ router.get(
   '/me',
   checkAuth(Role.USER, Role.AGENT),
   WalletControllers.getWalletByUserId
-) */
+) 
 
 router.post(
   '/top-up',
