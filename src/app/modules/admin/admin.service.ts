@@ -4,10 +4,41 @@ import { Transaction } from '../transaction/transaction.model'
 import { Role } from '../user/user.interface'
 import AppError from '../../errorHelpers/AppError'
 import httpStatus from '../../utils/httpStatus'
+import { QueryBuilder } from '../../utils/QueryBuilder'
 
-const getAllUsers = async () => User.find({role: Role.USER})
+const getAllUsers = async () => User.find({ role: Role.USER })
 const getAllAgents = async () => User.find({ role: Role.AGENT })
-const getAllWallets = async () => Wallet.find().populate('user')
+const getAllWallets = async (query: Record<string, string>) => {
+  const queryBuilder = new QueryBuilder(Wallet.find(), query)
+  const balanceAggregate = await Wallet.aggregate([
+    {
+      $group: {
+        _id: null,
+        totalBalance: {
+          $sum: '$balance',
+        },
+      },
+    },
+  ])
+  const totalBalance = balanceAggregate?.[0]?.totalBalance
+
+  const walletsData = queryBuilder
+    .filter()
+    .sort()
+    .fields()
+    .paginate()
+
+  const [data, meta] = await Promise.all([
+    walletsData.build(),
+    walletsData.getMeta(),
+  ])
+
+  return {
+    data,
+    meta: { ...meta, totalBalance },
+  }
+}
+
 const getAllTransactions = async () =>
   Transaction.find().populate(['from', 'to'])
 

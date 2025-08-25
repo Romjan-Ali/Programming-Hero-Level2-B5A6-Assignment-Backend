@@ -24,8 +24,9 @@ const getAllAgents = catchAsync(async (_req: Request, res: Response) => {
   })
 })
 
-const getAllWallets = catchAsync(async (_req: Request, res: Response) => {
-  const result = await AdminServices.getAllWallets()
+const getAllWallets = catchAsync(async (req: Request, res: Response) => {
+  const query = req.query 
+  const result = await AdminServices.getAllWallets(query as Record<string, string>)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -63,7 +64,7 @@ const approveOrSuspendAgent = catchAsync(
     const { status } = req.body // boolean
 
     const result = await AdminServices.approveOrSuspendAgent(agentId, status)
-    
+
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,

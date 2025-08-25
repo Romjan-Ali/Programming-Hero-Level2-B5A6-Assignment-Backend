@@ -47,6 +47,7 @@ export class QueryBuilder<T> {
 
     return this
   }
+
   paginate(): this {
     const page = Number(this.query.page) || 1
     const limit = Number(this.query.limit) || 10
@@ -62,9 +63,15 @@ export class QueryBuilder<T> {
   }
 
   async getMeta() {
+    const queryWithoutPagination = { ...this.query }
+    delete queryWithoutPagination.page
+    delete queryWithoutPagination.limit
+
+    // Count the documents based on the query without pagination
     const totalDocuments = await this.modelQuery.model.countDocuments(
-      this.build()
+      queryWithoutPagination
     )
+
     const page = Number(this.query.page) || 1
     const limit = Number(this.query.limit) || 10
 
