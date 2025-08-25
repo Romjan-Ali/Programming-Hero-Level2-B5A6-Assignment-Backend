@@ -5,7 +5,7 @@ import { Role } from '../user/user.interface'
 import AppError from '../../errorHelpers/AppError'
 import httpStatus from '../../utils/httpStatus'
 
-const getAllUsers = async () => User.find()
+const getAllUsers = async () => User.find({role: Role.USER})
 const getAllAgents = async () => User.find({ role: Role.AGENT })
 const getAllWallets = async () => Wallet.find().populate('user')
 const getAllTransactions = async () =>

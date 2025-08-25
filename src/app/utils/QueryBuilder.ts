@@ -14,7 +14,6 @@ export class QueryBuilder<T> {
     const filter = { ...this.query }
 
     for (const field of excludeField) {
- 
       delete filter[field]
     }
 
@@ -63,8 +62,9 @@ export class QueryBuilder<T> {
   }
 
   async getMeta() {
-    const totalDocuments = await this.modelQuery.model.countDocuments()
-
+    const totalDocuments = await this.modelQuery.model.countDocuments(
+      this.build()
+    )
     const page = Number(this.query.page) || 1
     const limit = Number(this.query.limit) || 10
 

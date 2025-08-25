@@ -16,7 +16,7 @@ router.post(
   TransactionController.createTransaction
 )
 
-router.get('/my-history', checkAuth(Role.USER), TransactionController.getTransactionsById)
+router.get('/my-history', checkAuth(Role.USER, Role.AGENT), TransactionController.getTransactionsById)
 
 router.patch(
   '/:id/status',

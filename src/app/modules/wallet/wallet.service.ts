@@ -1,6 +1,4 @@
 import { Wallet } from './wallet.model'
-import { Types } from 'mongoose'
-import { User } from '../user/user.model'
 import AppError from '../../errorHelpers/AppError'
 import httpStatus from '../../utils/httpStatus'
 import type { Role } from '../user/user.interface'

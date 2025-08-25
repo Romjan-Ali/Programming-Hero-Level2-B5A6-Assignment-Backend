@@ -60,6 +60,7 @@ const getAllUsers = catchAsync(
     })
   }
 )
+
 const getMe = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user as JwtPayload

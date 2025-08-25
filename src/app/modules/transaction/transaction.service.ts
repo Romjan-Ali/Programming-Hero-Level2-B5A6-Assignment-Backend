@@ -11,7 +11,27 @@ const createTransaction = async (
 }
 
 const getAllTransactions = async (): Promise<ITransaction[]> => {
-  return Transaction.find()
+  return await Transaction.find()
+}
+
+const getAllUsers = async (query: Record<string, string>) => {
+  const queryBuilder = new QueryBuilder(User.find(), query)
+  const usersData = queryBuilder
+    .filter()
+    .search(userSearchableFields)
+    .sort()
+    .fields()
+    .paginate()
+
+  const [data, meta] = await Promise.all([
+    usersData.build(),
+    usersData.getMeta(),
+  ])
+
+  return {
+    data,
+    meta,
+  }
 }
 
 const getTransactionsById = async (userId: string) => {
