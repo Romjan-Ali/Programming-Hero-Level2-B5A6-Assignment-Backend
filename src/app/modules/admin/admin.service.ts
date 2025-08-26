@@ -22,11 +22,7 @@ const getAllWallets = async (query: Record<string, string>) => {
   ])
   const totalBalance = balanceAggregate?.[0]?.totalBalance
 
-  const walletsData = queryBuilder
-    .filter()
-    .sort()
-    .fields()
-    .paginate()
+  const walletsData = queryBuilder.filter().sort().fields().paginate()
 
   const [data, meta] = await Promise.all([
     walletsData.build(),
@@ -39,8 +35,48 @@ const getAllWallets = async (query: Record<string, string>) => {
   }
 }
 
-const getAllTransactions = async () =>
-  Transaction.find().populate(['from', 'to'])
+const getAllTransactions = async (query: Record<string, string>) => {
+  console.log()
+
+  // Build search query
+  let searchQuery = {}
+  const q = query
+
+  console.log({q})
+
+  if (q) {
+    searchQuery = {
+      $or: [
+        // { transactionId: { $regex: q, $options: 'i' } },
+        // { 'from.name': { $regex: q, $options: 'i' } },
+        { 'from.email': { $regex: q, $options: 'i' } },
+        // { 'to.name': { $regex: q, $options: 'i' } },
+        // { type: { $regex: q, $options: 'i' } },
+        // { status: { $regex: q, $options: 'i' } },
+        // { reference: { $regex: q, $options: 'i' } },
+      ],
+    }
+  }
+
+  const queryBuilder = new QueryBuilder(Transaction.find(searchQuery), query)
+
+  // Get transactions with query builder
+  const transactionsData = queryBuilder
+    // .dateFilter()
+    .filter()
+    .sort()
+    .paginate()
+
+  const [data, meta] = await Promise.all([
+    transactionsData.build().populate(['from', 'to']),
+    transactionsData.getMeta(),
+  ])
+
+  return {
+    data,
+    meta,
+  }
+}
 
 const toggleWalletStatus = async (walletId: string, status: boolean) => {
   if (status === undefined || !walletId) {

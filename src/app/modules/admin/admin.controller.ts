@@ -25,23 +25,30 @@ const getAllAgents = catchAsync(async (_req: Request, res: Response) => {
 })
 
 const getAllWallets = catchAsync(async (req: Request, res: Response) => {
-  const query = req.query 
-  const result = await AdminServices.getAllWallets(query as Record<string, string>)
+  const query = req.query
+  const result = await AdminServices.getAllWallets(
+    query as Record<string, string>
+  )
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'All wallets retrieved successfully',
-    data: result,
+    data: result?.data,
+    meta: result?.meta,
   })
 })
 
-const getAllTransactions = catchAsync(async (_req: Request, res: Response) => {
-  const result = await AdminServices.getAllTransactions()
+const getAllTransactions = catchAsync(async (req: Request, res: Response) => {
+  const query = req.query
+  const result = await AdminServices.getAllTransactions(
+    query as Record<string, string>
+  )
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'All transactions retrieved successfully',
-    data: result,
+    data: result?.data,
+    meta: result?.meta
   })
 })
 

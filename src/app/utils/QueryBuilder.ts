@@ -22,6 +22,46 @@ export class QueryBuilder<T> {
     return this
   }
 
+  /**
+   * Create date filter query
+   * Query should have two parameter, startDate and endDate
+   * Filter based on createdAt field from the document
+   * Example of createdAt value is 2025-08-24T06:40:03.569Z
+   */
+
+/*   dateFilter(): this {
+    const { startDate, endDate } = this.query
+
+    if (startDate || endDate) {
+      const dateQuery: any = {}
+
+      if (startDate) {
+        // Convert to Date object if it's a valid date string
+        const start = new Date(startDate)
+        if (!isNaN(start.getTime())) {
+          dateQuery['$gte'] = start // greater than or equal to startDate
+        }
+      }
+
+      if (endDate) {
+        const end = new Date(endDate)
+        if (!isNaN(end.getTime())) {
+          dateQuery['$lte'] = end // less than or equal to endDate
+        }
+      }
+
+      console.log({dateQuery})
+
+      if (Object.keys(dateQuery).length > 0) {
+        this.modelQuery = this.modelQuery.find({
+          createdAt: dateQuery, // Apply the date filter on the createdAt field
+        })
+      }
+    }
+
+    return this
+  } */
+
   search(searchableField: string[]): this {
     const searchTerm = this.query.searchTerm || ''
     const searchQuery = {
@@ -40,6 +80,7 @@ export class QueryBuilder<T> {
 
     return this
   }
+  
   fields(): this {
     const fields = this.query.fields?.split(',').join(' ') || ''
 
@@ -66,6 +107,8 @@ export class QueryBuilder<T> {
     const queryWithoutPagination = { ...this.query }
     delete queryWithoutPagination.page
     delete queryWithoutPagination.limit
+    // delete queryWithoutPagination.startDate
+    // delete queryWithoutPagination.endDate
 
     // Count the documents based on the query without pagination
     const totalDocuments = await this.modelQuery.model.countDocuments(
