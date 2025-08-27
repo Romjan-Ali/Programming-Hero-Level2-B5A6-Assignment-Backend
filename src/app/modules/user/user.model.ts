@@ -48,4 +48,30 @@ const userSchema = new Schema<IUser>(
   }
 )
 
+// Exclude documents with isDeleted: true in all queries
+
+userSchema.pre('find', function () {
+  this.where({ isDeleted: false })
+})
+
+userSchema.pre('findOne', function () {
+  this.where({ isDeleted: false })
+})
+
+userSchema.pre('findOneAndUpdate', function () {
+  this.where({ isDeleted: false })
+})
+
+userSchema.pre('findOneAndUpdate', function () {
+  this.where({ isDeleted: false })
+})
+
+userSchema.pre('updateOne', function () {
+  this.where({ isDeleted: false })
+})
+
+userSchema.pre('updateMany', function () {
+  this.where({ isDeleted: false })
+})
+
 export const User = model<IUser>('User', userSchema)

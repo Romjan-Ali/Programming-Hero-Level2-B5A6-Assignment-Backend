@@ -13,24 +13,18 @@ router.post(
   UserControllers.createUser
 )
 
-router.get(
-  '/all-users',
-  checkAuth(Role.ADMIN),
-  UserControllers.getAllUsers
-)
+router.get('/all-users', checkAuth(Role.ADMIN), UserControllers.getAllUsers)
 
 router.get('/me', checkAuth(...Object.values(Role)), UserControllers.getMe)
 
-router.get(
-  '/:id',
-  checkAuth(Role.ADMIN),
-  UserControllers.getSingleUser
-)
+router.get('/:id', checkAuth(Role.ADMIN), UserControllers.getSingleUser)
+
+// router.patch('/delete-user', checkAuth(Role.ADMIN), UserControllers.deleteUser)
 
 router.patch(
   '/:id',
   validateRequest(updateUserZodSchema),
-  checkAuth(Role.AGENT, Role.USER),
+  checkAuth(...Object.values(Role)),
   UserControllers.updateUser
 )
 

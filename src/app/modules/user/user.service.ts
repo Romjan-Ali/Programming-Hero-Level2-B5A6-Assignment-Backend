@@ -8,6 +8,8 @@ import { userSearchableFields } from './user.constant'
 import { type IAuthProvider, type IUser, Role } from './user.interface'
 import { User } from './user.model'
 import { WalletServices } from '../wallet/wallet.service'
+import { Wallet } from '../wallet/wallet.model'
+import mongoose from 'mongoose'
 
 const createUser = async (payload: Partial<IUser>) => {
   const { email, password, ...rest } = payload
@@ -57,39 +59,37 @@ const updateUser = async (
   payload: Partial<IUser>,
   decodedToken: JwtPayload
 ) => {
+  // Regular users can only update themselves
+  if (decodedToken.role === Role.USER && userId !== decodedToken.userId) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized')
+  }
+
+  // Check if user exists
+  const existingUser = await User.findById(userId)
+  if (!existingUser) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found')
+  }
+
+  // Regular users cannot update role, isActive, isDeleted, or isVerified
   if (decodedToken.role === Role.USER) {
-    if (userId !== decodedToken.userId) {
-      throw new AppError(401, 'You are not authorized')
-    }
+    const forbiddenFields = ['role', 'isActive', 'isDeleted', 'isVerified']
+    forbiddenFields.forEach((field) => {
+      if (field in payload) {
+        throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized to update this field')
+      }
+    })
   }
 
-  const ifUserExist = await User.findById(userId)
-
-  if (!ifUserExist) {
-    throw new AppError(httpStatus.NOT_FOUND, 'User Not Found')
-  }
-
-  if (payload.role) {
-    if (decodedToken.role === Role.USER) {
-      throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized')
-    }
-  }
-
-  if (payload.isActive || payload.isDeleted || payload.isVerified) {
-    if (decodedToken.role === Role.USER) {
-      throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized')
-    }
-  }
-
-  const newUpdatedUser = await User.findByIdAndUpdate(userId, payload, {
+  // Perform update
+  const updatedUser = await User.findByIdAndUpdate(userId, payload, {
     new: true,
     runValidators: true,
   })
 
-  return newUpdatedUser
+  return updatedUser
 }
 
-const getAllUsers = async (query: Record<string, string>) => {
+/* const getAllUsers = async (query: Record<string, string>) => {
   const queryBuilder = new QueryBuilder(User.find(), query)
   const usersData = queryBuilder
     .filter()
@@ -107,7 +107,89 @@ const getAllUsers = async (query: Record<string, string>) => {
     data,
     meta,
   }
+} */
+
+/* const getAllUsers = async (query: Record<string, string>) => {
+  const queryBuilder = new QueryBuilder(User.find(), query)
+  const usersData = queryBuilder
+    .filter()
+    .search(userSearchableFields)
+    .sort()
+    .fields()
+    .paginate()
+
+  // Build the query with wallet population
+  const usersQuery = usersData.build().populate('wallet')
+
+  const [data, meta] = await Promise.all([
+    usersQuery.exec(),
+    usersData.getMeta(),
+  ])
+
+  return {
+    data,
+    meta,
+  }
+} */
+
+const getAllUsers = async (query: Record<string, string>) => {
+  const queryBuilder = new QueryBuilder(User.find(), query)
+  const usersData = queryBuilder
+    .filter()
+    .search(userSearchableFields)
+    .sort()
+    .fields()
+    .paginate()
+
+  const [users, meta] = await Promise.all([
+    usersData.build().exec(),
+    usersData.getMeta(),
+  ])
+
+  // Get wallet data for all users
+  const userIds = users.map(user => user._id)
+  const wallets = await Wallet.find({ user: { $in: userIds } })
+  
+  // Combine user and wallet data
+  const usersWithWallets = users.map(user => {
+    const userWallet = wallets.find(wallet => wallet.user.toString() === user._id.toString())
+    return {
+      ...user.toObject(),
+      wallet: userWallet || null
+    }
+  })
+
+  return {
+    data: usersWithWallets,
+    meta,
+  }
 }
+
+const deleteUser = async (userId: string) => {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    throw new Error('Invalid user ID')
+  }
+
+  // Mark the user as deleted and deactivate
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { isDeleted: true, isActive: false },
+    { new: true }
+  )
+
+  if (!user) {
+    throw new Error('User not found')
+  }
+
+  // deactivate user's wallet(s)
+  await Wallet.updateOne(
+    { user: user._id },
+    { isActive: false }
+  )
+
+  return user
+}
+
 
 const getSingleUser = async (id: string) => {
   const user = await User.findById(id).select('-password')
@@ -129,4 +211,5 @@ export const UserServices = {
   getSingleUser,
   updateUser,
   getMe,
+  deleteUser,
 }

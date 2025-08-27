@@ -27,6 +27,15 @@ const createWallet = async (userId: string, type: Role.USER | Role.AGENT) => {
   return wallet
 }
 
+// Get wallet by user 
+const getWalletByUser = async (userId: string) => {
+  const wallet = await Wallet.findOne({ user: userId })
+  if (!wallet) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Wallet not found')
+  }
+  return wallet
+}
+
 // Get wallet by user ID
 const getWalletByUserId = async (userId: string) => {
   const wallet = await Wallet.findOne({ user: userId })
@@ -293,6 +302,7 @@ const sendMoney = async (
 
 export const WalletServices = {
   createWallet,
+  getWalletByUser,
   getWalletByUserId,
   getAllWallets,
   topUp,

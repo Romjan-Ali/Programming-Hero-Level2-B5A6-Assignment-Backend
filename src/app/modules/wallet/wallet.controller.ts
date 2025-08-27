@@ -20,8 +20,21 @@ const createWallet = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
-const getWalletByUserId = catchAsync(async (req: Request, res: Response) => {
+const getWalletByUser = catchAsync(async (req: Request, res: Response) => {
   const { userId } = req.user as JwtPayload // assuming decoded user is attached via auth middleware
+
+  const result = await WalletServices.getWalletByUser(userId)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Wallet retrieved successfully',
+    data: result,
+  })
+})
+
+const getWalletByUserId = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.query as Record<string, string>
 
   const result = await WalletServices.getWalletByUserId(userId)
 
@@ -32,6 +45,7 @@ const getWalletByUserId = catchAsync(async (req: Request, res: Response) => {
     data: result,
   })
 })
+
 
 const topUp = catchAsync(async (req: Request, res: Response) => {
   const { userId } = req.user as JwtPayload
@@ -155,6 +169,7 @@ const sendMoney = catchAsync(async (req: Request, res: Response) => {
 
 export const WalletControllers = {
   createWallet,
+  getWalletByUser,
   getWalletByUserId,
   topUp,
   withdraw,

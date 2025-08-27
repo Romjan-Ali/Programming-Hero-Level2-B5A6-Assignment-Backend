@@ -25,8 +25,10 @@ router.get('/', WalletControllers.getAllWallets)
 router.get(
   '/me',
   checkAuth(Role.USER, Role.AGENT),
-  WalletControllers.getWalletByUserId
+  WalletControllers.getWalletByUser
 ) 
+
+router.get('')
 
 router.post(
   '/top-up',
