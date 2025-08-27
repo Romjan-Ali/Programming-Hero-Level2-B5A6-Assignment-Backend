@@ -1,7 +1,7 @@
 import bcryptjs from 'bcryptjs'
 import httpStatus from 'http-status-codes'
 import { type JwtPayload } from 'jsonwebtoken'
-import { envVars } from '../../config/env'
+import { envVars } from '../../config/env.ts' 
 import AppError from '../../errorHelpers/AppError'
 import { QueryBuilder } from '../../utils/QueryBuilder'
 import { userSearchableFields } from './user.constant'
