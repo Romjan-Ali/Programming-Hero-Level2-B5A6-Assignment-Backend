@@ -28,8 +28,6 @@ router.get(
   WalletControllers.getWalletByUser
 ) 
 
-router.get('')
-
 router.post(
   '/top-up',
   validateRequest(topUpWalletZodValidation),
