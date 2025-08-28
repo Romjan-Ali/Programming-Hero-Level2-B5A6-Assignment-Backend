@@ -36,13 +36,16 @@ export const getAllTransactions = catchAsync(
 export const getTransactionsById = catchAsync(
   async (req: Request, res: Response) => {
     const { userId } = req.user as JwtPayload
-    const result = await TransactionServices.getTransactionsById(userId)
+    const query = req.query as Record<string, string>
+
+    const result = await TransactionServices.getTransactionsById(userId, query)
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: 'Transactions retrieved successfully',
-      data: result,
+      data: result?.data,
+      meta: result?.meta,
     })
   }
 )
