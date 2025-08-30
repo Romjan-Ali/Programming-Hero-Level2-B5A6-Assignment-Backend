@@ -7,7 +7,7 @@ export const createWalletZodValidation = z.object({
 })
 
 export const updateWalletZodValidation = z.object({
-  toUserId: z.string().nonempty("Receiver's User ID is required"),
+  recipientIdentifier: z.string().nonempty("Receiver's phone number or email is required"),
   amount: z.number().min(0, 'Amount must be a non-negative number'),
   reference: z.string().optional()
 })

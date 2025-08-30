@@ -8,7 +8,7 @@ import {
   updateWalletZodValidation,
 } from './wallet.validation'
 import { Role } from '../user/user.interface'
-import { checkAnotherUserRole } from '../../middlewares/checkAnotherUserRole'
+import { checkRecipientUserRole } from '../../middlewares/checkRecipientUserRole'
 
 const router = express.Router()
 
@@ -46,7 +46,7 @@ router.post(
   '/send-money',
   validateRequest(updateWalletZodValidation),
   checkAuth(Role.USER),
-  checkAnotherUserRole(Role.USER),
+  checkRecipientUserRole(Role.USER),
   WalletControllers.sendMoney
 )
 
@@ -54,7 +54,7 @@ router.patch(
   '/cash-in',
   validateRequest(updateWalletZodValidation),
   checkAuth(Role.AGENT),
-  checkAnotherUserRole(Role.USER),
+  checkRecipientUserRole(Role.USER),
   WalletControllers.cashIn
 )
 
@@ -62,7 +62,7 @@ router.patch(
   '/cash-out',
   validateRequest(updateWalletZodValidation),
   checkAuth(Role.AGENT),
-  checkAnotherUserRole(Role.USER),
+  checkRecipientUserRole(Role.USER),
   WalletControllers.cashOut
 )
 

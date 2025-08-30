@@ -4,30 +4,37 @@ import AppError from '../errorHelpers/AppError'
 import { User } from '../modules/user/user.model'
 import { Role } from '../modules/user/user.interface'
 
-export const checkAnotherUserRole =
+export const checkRecipientUserRole =
   (...allowedRoles: Role[]) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { toUserId } = req.body
+      const { recipientIdentifier } = req.body
 
-      if (!toUserId) {
-        throw new AppError(httpStatus.BAD_REQUEST, 'toUserId is required')
+      if (!recipientIdentifier) {
+        throw new AppError(
+          httpStatus.BAD_REQUEST,
+          'Recipient identifier is required'
+        )
       }
 
-      const toUser = await User.findById(toUserId)
+      const recipient = await User.findOne({
+        $or: [{ email: recipientIdentifier }, { phone: recipientIdentifier }],
+      })
 
-      if (!toUser) {
+      if (!recipient) {
         throw new AppError(httpStatus.NOT_FOUND, 'Receiver user not found')
       }
 
-      console.log({ toUser })
+      console.log({ recipient })
 
-      if (!allowedRoles.includes(toUser.role)) {
+      if (!allowedRoles.includes(recipient.role)) {
         throw new AppError(
           httpStatus.FORBIDDEN,
           `Receiver is not authorized as ${allowedRoles.join(', ')}`
         )
       }
+
+      res.locals.recipeint = recipient
 
       next()
     } catch (error) {

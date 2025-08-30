@@ -148,13 +148,13 @@ const getAllWallets = catchAsync(async (req: Request, res: Response) => {
 
 const sendMoney = catchAsync(async (req: Request, res: Response) => {
   const fromUserId = (req.user as JwtPayload)?.userId
-  const toUserId: string = req.body.toUserId
+  const recipeint: string = res.locals.recipeint
   const amount: number = req.body.amount
   const reference: string = req.body.reference || null
 
   const result = await WalletServices.sendMoney(
     fromUserId,
-    toUserId,
+    recipeint,
     amount,
     reference
   )

@@ -1,6 +1,3 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
 interface EnvConfig {
   PORT: string
   MONGO_URI: string

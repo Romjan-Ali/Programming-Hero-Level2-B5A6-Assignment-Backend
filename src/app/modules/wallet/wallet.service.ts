@@ -8,6 +8,7 @@ import {
   TransactionType,
   type ITransaction,
 } from '../transaction/transaction.interface'
+import type mongoose from 'mongoose'
 
 // Create a wallet for a user
 const createWallet = async (userId: string, type: Role.USER | Role.AGENT) => {
@@ -27,7 +28,7 @@ const createWallet = async (userId: string, type: Role.USER | Role.AGENT) => {
   return wallet
 }
 
-// Get wallet by user 
+// Get wallet by user
 const getWalletByUser = async (userId: string) => {
   const wallet = await Wallet.findOne({ user: userId })
   if (!wallet) {
@@ -236,9 +237,9 @@ const cashOut = async (
 // Transfer money between two wallets (user to user)
 const sendMoney = async (
   fromUserId: string,
-  toUserId: string,
+  recipient: any,
   amount: number,
-  reference: string | null
+  reference: string | undefined
 ) => {
   const session = await Wallet.startSession()
   session.startTransaction()
@@ -249,7 +250,9 @@ const sendMoney = async (
     const fromWallet = await Wallet.findOne({ user: fromUserId }).session(
       session
     )
-    const toWallet = await Wallet.findOne({ user: toUserId }).session(session)
+    const toWallet = await Wallet.findOne({ user: recipient._id }).session(
+      session
+    )
 
     if (!fromWallet || !toWallet) {
       throw new AppError(
@@ -272,7 +275,7 @@ const sendMoney = async (
       amount,
       type: TransactionType.send_money,
       from: fromUserId,
-      to: toUserId,
+      to: recipient?._id.toString(),
       status: TransactionStatus.pending,
     }
 
@@ -285,6 +288,8 @@ const sendMoney = async (
 
     moneyTransaction.status = TransactionStatus.completed
     await moneyTransaction.save()
+
+    console.log(toWallet)
 
     return { fromWallet, toWallet }
   } catch (error) {

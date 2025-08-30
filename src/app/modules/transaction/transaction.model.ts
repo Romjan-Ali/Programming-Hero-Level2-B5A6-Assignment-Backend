@@ -18,12 +18,12 @@ const transactionSchema = new Schema<ITransaction>(
       required: true,
     },
     from: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: 'User'
       // required: true,
     },
     to: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: 'User'
       // required: true,
     },

@@ -1,3 +1,5 @@
+import { Types } from "mongoose"
+
 export enum TransactionType {
   top_up = 'top_up',
   withdraw = 'withdraw',
@@ -19,8 +21,8 @@ export interface ITransaction {
   _id?: string
   amount: number
   type: TransactionType
-  from: string // Wallet ID or User ID
-  to: string // Wallet ID or User ID (if applicable)
+  from: String // Wallet ID or User ID
+  to: String  // Wallet ID or User ID (if applicable)
   reference?: string
   status: TransactionStatus
   createdAt?: Date
