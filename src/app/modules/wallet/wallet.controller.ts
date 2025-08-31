@@ -88,15 +88,15 @@ const cashIn = catchAsync(async (req: Request, res: Response) => {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Unauthorized request')
   }
 
-  const toUserId: string = req.body.toUserId
+  const recipient: any = res.locals.recipient
   const amount: number = req.body.amount
   const reference: string = req.body.reference || null
 
-  console.log({ toUserId })
+  console.log({ recipient })
 
   const result = await WalletServices.cashIn(
     fromUserId,
-    toUserId,
+    recipient,
     amount,
     reference
   )
@@ -148,13 +148,13 @@ const getAllWallets = catchAsync(async (req: Request, res: Response) => {
 
 const sendMoney = catchAsync(async (req: Request, res: Response) => {
   const fromUserId = (req.user as JwtPayload)?.userId
-  const recipeint: string = res.locals.recipeint
+  const recipient: any = res.locals.recipient
   const amount: number = req.body.amount
   const reference: string = req.body.reference || null
 
   const result = await WalletServices.sendMoney(
     fromUserId,
-    recipeint,
+    recipient,
     amount,
     reference
   )

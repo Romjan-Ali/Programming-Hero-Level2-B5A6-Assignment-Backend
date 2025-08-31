@@ -98,7 +98,7 @@ const withdraw = async (userId: string, amount: number) => {
 // Cash in by Agent (decrease balance)
 const cashIn = async (
   fromUserId: string,
-  toUserId: string,
+  recipient: any,
   amount: number,
   reference: string | null = null
 ) => {
@@ -108,6 +108,11 @@ const cashIn = async (
   let moneyTransaction
 
   try {
+
+    const toUser: any = {
+      $or: [{}]
+    }
+
     // fromWallet => Agent's wallet
     const fromWallet = await Wallet.findOne({ user: fromUserId }).session(
       session
@@ -121,7 +126,7 @@ const cashIn = async (
     }
 
     // toWallet => User's Wallet
-    const toWallet = await Wallet.findOne({ user: toUserId }).session(session)
+    const toWallet = await Wallet.findOne({ user: recipient._id }).session(session)
 
     if (!toWallet) {
       throw new AppError(httpStatus.NOT_FOUND, "Receiver's wallet not found")
@@ -137,7 +142,7 @@ const cashIn = async (
       amount,
       type: TransactionType.cash_in,
       from: fromUserId,
-      to: toUserId,
+      to: recipient._id,
       status: TransactionStatus.pending,
     }
 

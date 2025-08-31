@@ -34,7 +34,7 @@ export const checkRecipientUserRole =
         )
       }
 
-      res.locals.recipeint = recipient
+      res.locals.recipient = recipient
 
       next()
     } catch (error) {
