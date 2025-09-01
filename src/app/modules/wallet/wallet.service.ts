@@ -108,11 +108,6 @@ const cashIn = async (
   let moneyTransaction
 
   try {
-
-    const toUser: any = {
-      $or: [{}]
-    }
-
     // fromWallet => Agent's wallet
     const fromWallet = await Wallet.findOne({ user: fromUserId }).session(
       session
@@ -173,7 +168,7 @@ const cashIn = async (
 // Cash out by Agent (increase balance)
 const cashOut = async (
   fromUserId: string,
-  toUserId: string,
+  recipient: any,
   amount: number,
   reference: string | null
 ) => {
@@ -192,7 +187,7 @@ const cashOut = async (
     }
 
     // toWallet => Agent's wallet
-    const toWallet = await Wallet.findOne({ user: toUserId }).session(session)
+    const toWallet = await Wallet.findOne({ user: recipient._id }).session(session)
     if (!toWallet) {
       throw new AppError(httpStatus.NOT_FOUND, "Receiver's wallet not found")
     }
@@ -201,8 +196,8 @@ const cashOut = async (
       throw new AppError(httpStatus.BAD_REQUEST, 'Insufficient balance')
     }
 
-    fromWallet.balance -= amount
-    toWallet.balance += amount
+    fromWallet.balance += amount
+    toWallet.balance -= amount
 
     await fromWallet.save({ session })
     await toWallet.save({ session })
@@ -211,7 +206,7 @@ const cashOut = async (
       amount,
       type: TransactionType.cash_out,
       from: fromUserId,
-      to: toUserId,
+      to: recipient._id,
       status: TransactionStatus.pending,
     }
 

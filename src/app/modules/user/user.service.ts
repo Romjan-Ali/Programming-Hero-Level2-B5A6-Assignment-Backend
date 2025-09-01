@@ -1,7 +1,7 @@
 import bcryptjs from 'bcryptjs'
 import httpStatus from 'http-status-codes'
 import { type JwtPayload } from 'jsonwebtoken'
-import { envVars } from '../../config/env.ts' 
+import { envVars } from '../../config/env.ts'
 import AppError from '../../errorHelpers/AppError'
 import { QueryBuilder } from '../../utils/QueryBuilder'
 import { userSearchableFields } from './user.constant'
@@ -75,7 +75,10 @@ const updateUser = async (
     const forbiddenFields = ['role', 'isActive', 'isDeleted', 'isVerified']
     forbiddenFields.forEach((field) => {
       if (field in payload) {
-        throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized to update this field')
+        throw new AppError(
+          httpStatus.FORBIDDEN,
+          'You are not authorized to update this field'
+        )
       }
     })
   }
@@ -147,15 +150,17 @@ const getAllUsers = async (query: Record<string, string>) => {
   ])
 
   // Get wallet data for all users
-  const userIds = users.map(user => user._id)
+  const userIds = users.map((user) => user._id)
   const wallets = await Wallet.find({ user: { $in: userIds } })
-  
+
   // Combine user and wallet data
-  const usersWithWallets = users.map(user => {
-    const userWallet = wallets.find(wallet => wallet.user.toString() === user._id.toString())
+  const usersWithWallets = users.map((user) => {
+    const userWallet = wallets.find(
+      (wallet) => wallet.user.toString() === user._id.toString()
+    )
     return {
       ...user.toObject(),
-      wallet: userWallet || null
+      wallet: userWallet || null,
     }
   })
 
@@ -163,6 +168,39 @@ const getAllUsers = async (query: Record<string, string>) => {
     data: usersWithWallets,
     meta,
   }
+}
+
+const changeUserStatus = async (userId: string, status: string) => {
+  if (status === undefined || !userId) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Please send all requiered fields.'
+    )
+  }
+
+  const statusTypes = ['ACTIVE', 'INACTIVE', 'BLOCKED']
+
+  if (!statusTypes.includes(status.toUpperCase())) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Invalid status type.'
+    )
+  }  
+
+  const result = await User.findByIdAndUpdate(
+    userId,
+    { isActive: status.toUpperCase() },
+    { new: true }
+  )
+
+  if (!result) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Agent with the provided id is not found.'
+    )
+  }
+
+  return result
 }
 
 const deleteUser = async (userId: string) => {
@@ -182,14 +220,10 @@ const deleteUser = async (userId: string) => {
   }
 
   // deactivate user's wallet(s)
-  await Wallet.updateOne(
-    { user: user._id },
-    { isActive: false }
-  )
+  await Wallet.updateOne({ user: user._id }, { isActive: false })
 
   return user
 }
-
 
 const getSingleUser = async (id: string) => {
   const user = await User.findById(id).select('-password')
@@ -208,6 +242,7 @@ const getMe = async (userId: string) => {
 export const UserServices = {
   createUser,
   getAllUsers,
+  changeUserStatus,
   getSingleUser,
   updateUser,
   getMe,

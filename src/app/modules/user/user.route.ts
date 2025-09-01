@@ -28,4 +28,6 @@ router.patch(
   UserControllers.updateUser
 )
 
+router.patch('/users/:userId/status', UserControllers.changeUserStatus)
+
 export const UserRoutes = router

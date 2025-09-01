@@ -12,6 +12,7 @@ router.get('/agents', AdminControllers.getAllAgents)
 router.get('/wallets', AdminControllers.getAllWallets)
 router.get('/transactions', AdminControllers.getAllTransactions)
 
+router.patch('/edit-profile', AdminControllers.editProfile)
 router.patch('/wallets/:walletId/status', AdminControllers.toggleWalletStatus)
 router.patch('/agents/:agentId/status', AdminControllers.approveOrSuspendAgent)
 

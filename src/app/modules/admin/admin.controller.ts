@@ -3,6 +3,7 @@ import httpStatus from '../../utils/httpStatus'
 import { catchAsync } from '../../utils/catchAsync'
 import { sendResponse } from '../../utils/sendResponse'
 import { AdminServices } from './admin.service'
+import type { JwtPayload } from 'jsonwebtoken'
 
 const getAllUsers = catchAsync(async (_req: Request, res: Response) => {
   const result = await AdminServices.getAllUsers()
@@ -48,7 +49,7 @@ const getAllTransactions = catchAsync(async (req: Request, res: Response) => {
     success: true,
     message: 'All transactions retrieved successfully',
     data: result?.data,
-    meta: result?.meta
+    meta: result?.meta,
   })
 })
 
@@ -68,20 +69,34 @@ const toggleWalletStatus = catchAsync(async (req: Request, res: Response) => {
 const approveOrSuspendAgent = catchAsync(
   async (req: Request, res: Response) => {
     const { agentId } = req.params
-    const { status } = req.body // boolean
 
-    const result = await AdminServices.approveOrSuspendAgent(agentId, status)
+    const result = await AdminServices.approveOrSuspendAgent(agentId)
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: `Agent has been ${
-        status ? 'approved' : 'suspended'
-      } successfully`,
+      message: `Agent status changed successfully`,
       data: result,
     })
   }
 )
+
+const editProfile = catchAsync(async (req: Request, res: Response) => {
+  const  user = req.user as JwtPayload
+  const updatedData = req.body
+
+  const result = await AdminServices.editProfile(
+    user as Record<string, any>,
+    updatedData as Record<string, any>
+  )
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `Profile updated successfully`,
+    data: result,
+  })
+})
 
 export const AdminControllers = {
   getAllUsers,
@@ -90,4 +105,5 @@ export const AdminControllers = {
   getAllTransactions,
   toggleWalletStatus,
   approveOrSuspendAgent,
+  editProfile,
 }

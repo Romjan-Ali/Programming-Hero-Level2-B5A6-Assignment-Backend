@@ -35,180 +35,6 @@ const getAllWallets = async (query: Record<string, string>) => {
   }
 }
 
-/* const getAllTransactions = async (query: Record<string, string>) => {
-  // console.log()
-
-  // Build search query
-  let searchQuery = {}
-  const q = query
-
-  console.log({ q })
-
-  if (query) {
-    searchQuery = {
-      $or: [
-        // { transactionId: { $regex: q, $options: 'i' } },
-        // { 'from.name': { $regex: q, $options: 'i' } },
-        // { 'from.email': { $regex: `${query}`, $options: 'i' } },
-        // { 'to.name': { $regex: q, $options: 'i' } },
-        { type: { $regex: q, $options: 'i' } },
-        // { status: { $regex: q, $options: 'i' } },
-        // { reference: { $regex: q, $options: 'i' } },
-      ],
-    }
-  }
-
-  const result = await Transaction.find({
-    $or: [
-      { type: { $regex: 'in' } },
-      // { Title: { $regex: `${query}` } },
-    ],
-  })
-
-  console.log('result', result)
-
-  // const aggregateResult = awiat Transaction.aggregate([])
-
-  const queryBuilder = new QueryBuilder(Transaction.find(), {
-    $or: [
-      { type: { $regex: 'in', $options: 'i' } }, // Correct: Regex for the 'type' field
-      { reference: { $regex: 'in', $options: 'i' } }, // Correct: Regex for the 'reference' field
-    ],
-  })
-
-  // const queryBuilder = new QueryBuilder(aggregateResult, query)
-
-  // Get transactions with query builder
-  const transactionsData = queryBuilder
-    // .dateFilter()
-    .filter()
-    .sort()
-    .paginate()
-
-  const [data, meta] = await Promise.all([
-    transactionsData.build().populate(['from', 'to']),
-    transactionsData.getMeta(),
-  ])
-
-  return {
-    data,
-    meta,
-  }
-} */
-
-/* const getAllTransactions = async (query: Record<string, string>) => {
-  // Build search query
-  let searchQuery: any = {}
-  const q = query || ''
-
-  console.log({ q })
-
-  if (q) {
-    searchQuery = {
-      $or: [
-        // { type: { $regex: q.type, $options: 'i' } },
-        // { status: { $regex: q, $options: 'i' } },
-        { reference: { $regex: q.reference, $options: 'i' } },
-        // { 'from.name': { $regex: q.name, $options: 'i' } },
-        // { 'from.email': { $regex: q.email, $options: 'i' } },
-        // { 'to.name': { $regex: q, $options: 'i' } },
-        // { 'to.email': { $regex: q, $options: 'i' } },
-      ],
-    }
-  }
-
-  // Pagination and limit setup
-  const page = Number(query.page) || 1
-  const limit = Number(query.limit) || 10
-  const skip = (page - 1) * limit
-
-  // Fetch transactions with searchQuery applied and pagination
-  const transactionsData = await Transaction.find(searchQuery)
-    .skip(skip)
-    .limit(limit)
-    .populate(['from', 'to']) // Populating 'from' and 'to' user details
-
-  // Get the total count of matching documents (to calculate pagination)
-  const totalDocuments = await Transaction.countDocuments(searchQuery)
-  const totalPage = Math.ceil(totalDocuments / limit)
-
-  const meta = {
-    page,
-    limit,
-    total: totalDocuments,
-    totalPage,
-  }
-
-  return {
-    data: transactionsData,
-    meta,
-  }
-} */
-
-/* const getAllTransactions = async (query: Record<string, string>) => {
-  const page = Number(query.page || 1)
-  const limit = Number(query.limit || 1)
-  const skip = (page - 1) * limit
-
-  const searchTerm = query.searchTerm || undefined
-
-  let searchQuery
-
-  if (searchTerm) {
-    // First, find users that match the search term
-    const matchingUsers = await User.find({
-      $or: [
-        { name: { $regex: searchTerm, $options: 'i' } },
-        { email: { $regex: searchTerm, $options: 'i' } },
-      ],
-    }).select('_id')
-
-    const matchingUserIds = matchingUsers.map((user) => user._id)
-
-    // Then, find transactions that either:
-    // 1. Match the search term in transaction fields, OR
-    // 2. Involve users that match the search term
-
-    searchQuery = {
-      $or: [
-        // Search in transaction fields
-        {
-          $or: [
-            { type: { $regex: searchTerm, $options: 'i' } },
-            { status: { $regex: searchTerm, $options: 'i' } },
-            { reference: { $regex: searchTerm, $options: 'i' } },
-          ],
-        },
-        // Search in user references
-        {
-          $or: [
-            { from: { $in: matchingUserIds } },
-            { to: { $in: matchingUserIds } },
-          ],
-        },
-      ],
-    }
-  }
-
-  const transactions = await Transaction.find(searchQuery || {})
-    .skip(skip)
-    .limit(limit)
-    .populate(['from', 'to'])
-    .sort({ createdAt: -1 })
-
-  const total = await Transaction.countDocuments(searchQuery || {})
-
-  return {
-    data: transactions,
-    meta: {
-      page: page,
-      limit: limit,
-      total: total,
-      totalPage: Math.ceil(total / limit),
-    },
-  }
-} */
-
 const getAllTransactions = async (query: Record<string, string>) => {
   const page = Number(query.page || 1)
   const limit = Number(query.limit || 10)
@@ -317,25 +143,46 @@ const toggleWalletStatus = async (walletId: string, status: boolean) => {
   return result
 }
 
-const approveOrSuspendAgent = async (agentId: string, active: boolean) => {
-  if (active === undefined || !agentId) {
+const approveOrSuspendAgent = async (agentId: string) => {
+  if (!agentId) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
       'Please send all requiered fields.'
     )
   }
-  const result = await User.findByIdAndUpdate(
-    agentId,
-    { isApproved: active },
-    { new: true }
-  )
 
-  if (!result) {
+  const agent = await User.findById(agentId)
+  if (!agent) throw new Error('Agent not found')
+
+  agent.isApproved = !agent.isApproved
+  await agent.save()
+
+  if (!agent) {
     throw new AppError(
       httpStatus.NOT_FOUND,
       'Agent with the provided id is not found.'
     )
   }
+
+  return agent
+}
+
+const editProfile = async (user: Record<string, any>, updatedData: Record<string, any>) => {
+  console.log({updatedData})
+  const result = await User.findById(user.userId) as Record<string, any>;
+
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Admin is not found.')
+  }
+
+  // Only update keys that exist in the current user document
+  Object.keys(updatedData).forEach((key) => {
+    if (key in result) {
+      result[key] = updatedData[key]
+    }
+  })
+
+  await result.save()
 
   return result
 }
@@ -347,4 +194,5 @@ export const AdminServices = {
   getAllTransactions,
   toggleWalletStatus,
   approveOrSuspendAgent,
+  editProfile,
 }

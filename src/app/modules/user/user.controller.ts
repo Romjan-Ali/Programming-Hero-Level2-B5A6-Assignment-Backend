@@ -62,6 +62,24 @@ const getAllUsers = catchAsync(
   }
 )
 
+const changeUserStatus = catchAsync(
+  async (req: Request, res: Response) => {
+    const { userId } = req.params
+    const { status } = req.body // ACTIVE / INACTIVE / BLOCKED
+
+    const result = await UserServices.changeUserStatus(userId, status)
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: `User has been ${
+        status.toLowerCase()
+      } successfully`,
+      data: result,
+    })
+  }
+)
+
 const getMe = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user as JwtPayload
@@ -104,6 +122,7 @@ const deleteUser = catchAsync(
 export const UserControllers = {
   createUser,
   getAllUsers,
+  changeUserStatus,
   getSingleUser,
   updateUser,
   getMe,

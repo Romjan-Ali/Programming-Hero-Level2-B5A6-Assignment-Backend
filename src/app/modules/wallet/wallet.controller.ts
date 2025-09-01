@@ -116,13 +116,13 @@ const cashOut = catchAsync(async (req: Request, res: Response) => {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Unauthorized request')
   }
 
-  const toUserId: string = req.body.toUserId
+  const recipient: any = res.locals.recipient
   const amount: number = req.body.amount
   const reference: string = req.body.reference || null
 
   const result = await WalletServices.cashOut(
     fromUserId,
-    toUserId,
+    recipient,
     amount,
     reference
   )

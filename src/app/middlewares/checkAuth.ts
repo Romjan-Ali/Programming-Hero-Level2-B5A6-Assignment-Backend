@@ -49,6 +49,10 @@ export const checkAuth =
         throw new AppError(403, 'You are not permitted to view this route!')
       }
 
+      if(isUserExist.role === "AGENT" && !isUserExist?.isApproved){
+        throw new AppError(403, 'Your agent account is not approved by admin')
+      }
+
       const userTokens = createUserTokens(isUserExist)
       setAuthCookie(res, userTokens)
 
