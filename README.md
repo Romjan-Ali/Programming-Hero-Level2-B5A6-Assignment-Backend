@@ -5,7 +5,7 @@ A server-side digital wallet system (similar to bKash/Nagad) built using **Bun**
 ---
 ## Live Production
 
-Live production URL: [https://programming-hero-level2-b5a5-assignment.onrender.com/](https://programming-hero-level2-b5a5-assignment.onrender.com/)
+Live production URL: https://programming-hero-level2-b5a6-assignment.onrender.com/api/v1
 
 ---
 
@@ -251,11 +251,6 @@ bun start
 ```
 
 ---
-## Video Description
-
-▶️ [Watch Demo Video on YouTube](https://youtu.be/NU3uJrWgApw)
-
----
 
 ## 🧾 Notes
 
@@ -266,7 +261,7 @@ bun start
 - Send money only allowed between users
 
 ## 📚 Assignment Source
-Based on B5A5 [Assignment Guide](https://github.com/Apollo-Level2-Web-Dev/B5A5/blob/main/1.%20Digital%20Wallet%20System.md)
+Based on B5A5 [Assignment Guide](https://github.com/Romjan-Ali/Programming-Hero-Level2-B5A6-Assignment-Backend)
 
 ## 👨‍💻 Author
 
