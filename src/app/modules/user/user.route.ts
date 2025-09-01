@@ -19,10 +19,8 @@ router.get('/me', checkAuth(...Object.values(Role)), UserControllers.getMe)
 
 router.get('/:id', checkAuth(Role.ADMIN), UserControllers.getSingleUser)
 
-// router.patch('/delete-user', checkAuth(Role.ADMIN), UserControllers.deleteUser)
-
 router.patch(
-  '/:id',
+  '/edit-profile',
   validateRequest(updateUserZodSchema),
   checkAuth(...Object.values(Role)),
   UserControllers.updateUser

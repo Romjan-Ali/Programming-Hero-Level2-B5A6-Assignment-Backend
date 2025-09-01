@@ -55,23 +55,25 @@ const createUser = async (payload: Partial<IUser>) => {
 }
 
 const updateUser = async (
-  userId: string,
   payload: Partial<IUser>,
   decodedToken: JwtPayload
 ) => {
-  // Regular users can only update themselves
-  if (decodedToken.role === Role.USER && userId !== decodedToken.userId) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized')
-  }
-
   // Check if user exists
-  const existingUser = await User.findById(userId)
+  const existingUser = await User.findById(decodedToken?.userId)
   if (!existingUser) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found')
   }
 
+  // Regular users can only update themselves
+  if (existingUser.role !== decodedToken.role) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'You are not authorized to edit profile'
+    )
+  }
+
   // Regular users cannot update role, isActive, isDeleted, or isVerified
-  if (decodedToken.role === Role.USER) {
+  if (decodedToken.role === (Role.USER || Role.AGENT)) {
     const forbiddenFields = ['role', 'isActive', 'isDeleted', 'isVerified']
     forbiddenFields.forEach((field) => {
       if (field in payload) {
@@ -84,7 +86,7 @@ const updateUser = async (
   }
 
   // Perform update
-  const updatedUser = await User.findByIdAndUpdate(userId, payload, {
+  const updatedUser = await User.findByIdAndUpdate(decodedToken?.userId, payload, {
     new: true,
     runValidators: true,
   })
@@ -181,11 +183,8 @@ const changeUserStatus = async (userId: string, status: string) => {
   const statusTypes = ['ACTIVE', 'INACTIVE', 'BLOCKED']
 
   if (!statusTypes.includes(status.toUpperCase())) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'Invalid status type.'
-    )
-  }  
+    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid status type.')
+  }
 
   const result = await User.findByIdAndUpdate(
     userId,
