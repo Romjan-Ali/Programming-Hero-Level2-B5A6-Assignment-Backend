@@ -1,6 +1,6 @@
-# 📲 Digital Wallet API (B5A5)
+# 📲 Digital Wallet API (B5A6)
 
-A server-side digital wallet system (similar to bKash/Nagad) built using **Bun**, **TypeScript**, **Express.js**, **Zod**, and **MongoDB**. This is part of Level 2, Assignment 5 (B5A5) of the Programming Hero Next Level Web Development course.
+A server-side digital wallet system (similar to bKash/Nagad) built using **Bun**, **TypeScript**, **Express.js**, **Zod**, and **MongoDB**. This is part of Level 2, Assignment 6 (B5A6) of the Programming Hero Next Level Web Development course.
 
 ---
 ## Live Production
