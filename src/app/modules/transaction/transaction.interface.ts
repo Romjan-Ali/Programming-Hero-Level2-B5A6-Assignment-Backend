@@ -1,3 +1,4 @@
+// src/app/modules/transaction/transaction.interface.ts
 import { Types } from "mongoose"
 
 export enum TransactionType {

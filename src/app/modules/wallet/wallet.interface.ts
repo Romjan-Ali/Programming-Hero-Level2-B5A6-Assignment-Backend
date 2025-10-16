@@ -1,3 +1,4 @@
+// src/app/modules/wallet/wallet.interface.ts
 import type { Types } from "mongoose"
 import type { Role } from "../user/user.interface"
 

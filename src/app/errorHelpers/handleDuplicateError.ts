@@ -1,3 +1,4 @@
+// src/app/errorHelpers/handleDuplicateError.ts
 import { type TGenericErrorResponse } from "../interfaces/error.types"
 
 export const handleDuplicateError = (err: any): TGenericErrorResponse => {

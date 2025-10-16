@@ -1,3 +1,4 @@
+// src/app/modules/wallet/wallet.model.ts
 import { model, Schema } from 'mongoose'
 import { type IWallet } from './wallet.interface'
 import { Role } from '../user/user.interface'

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/app/utils/sendEmail.ts
 import ejs from 'ejs'
 import nodemailer from 'nodemailer'
 import path from 'path'

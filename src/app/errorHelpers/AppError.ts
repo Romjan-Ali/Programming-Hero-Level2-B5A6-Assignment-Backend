@@ -1,3 +1,4 @@
+// src/app/errorHelpers/AppError.ts
 class AppError extends Error {
   public statusCode: number
 

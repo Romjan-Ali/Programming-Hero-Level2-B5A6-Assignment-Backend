@@ -1,3 +1,4 @@
+// src/app/interfaces/index.d.ts
 import { type JwtPayload } from 'jsonwebtoken'
 
 declare global {

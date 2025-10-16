@@ -1,3 +1,4 @@
+// src/app/modules/user/user.model.ts
 import { model, Schema } from 'mongoose'
 import {
   type IAuthProvider,

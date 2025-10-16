@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
-// import { deleteImageFromCLoudinary } from "../config/cloudinary.config";
+// src/app/middlewares/globalErrorHandler.ts
 import { envVars } from '../config/env'
 import AppError from '../errorHelpers/AppError'
 import { handleCastError } from '../errorHelpers/handleCastError'

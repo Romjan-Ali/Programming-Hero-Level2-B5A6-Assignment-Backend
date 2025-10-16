@@ -1,3 +1,4 @@
+// src/app/modules/admin/admin.controller.ts
 import type { Request, Response } from 'express'
 import httpStatus from '../../utils/httpStatus'
 import { catchAsync } from '../../utils/catchAsync'

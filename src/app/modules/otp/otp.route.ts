@@ -1,3 +1,4 @@
+// src/app/modules/otp/otp.route.ts
 import express from 'express'
 import { OTPController } from './otp.controller'
 

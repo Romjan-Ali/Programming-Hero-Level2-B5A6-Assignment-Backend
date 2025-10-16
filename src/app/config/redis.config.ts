@@ -1,3 +1,4 @@
+// src/app/config/redis.config.ts
 import { createClient } from 'redis';
 import { envVars } from './env';
 

@@ -1,3 +1,4 @@
+// src/app/modules/auth/auth.route.ts
 import { Router, type NextFunction, type Request, type Response } from 'express'
 import passport from 'passport'
 import { envVars } from '../../config/env'

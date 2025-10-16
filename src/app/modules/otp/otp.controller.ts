@@ -1,3 +1,4 @@
+// src/app/modules/otp/otp.controller.ts
 import type { Request, Response } from 'express'
 import { catchAsync } from '../../utils/catchAsync'
 import { sendResponse } from '../../utils/sendResponse'

@@ -1,3 +1,4 @@
+// src/app/utils/jwt.ts
 import jwt, { type JwtPayload, type SignOptions } from 'jsonwebtoken'
 
 export const generateToken = (

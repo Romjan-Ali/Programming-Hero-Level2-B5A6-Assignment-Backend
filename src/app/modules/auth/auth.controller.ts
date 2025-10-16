@@ -1,3 +1,4 @@
+// src/app/modules/auth/auth.controller.ts
 import type { NextFunction, Request, Response } from 'express'
 import httpStatus from 'http-status-codes'
 import { type JwtPayload } from 'jsonwebtoken'

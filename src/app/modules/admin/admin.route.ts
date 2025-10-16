@@ -1,3 +1,4 @@
+// src/app/modules/admin/admin.route.ts
 import express from 'express'
 import { AdminControllers } from './admin.controller'
 import { checkAuth } from '../../middlewares/checkAuth'

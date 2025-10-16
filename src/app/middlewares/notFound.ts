@@ -1,3 +1,4 @@
+// src/app/middlewares/notFound.ts
 import type { Request, Response } from 'express'
 import httpStatus from 'http-status-codes'
 

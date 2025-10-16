@@ -1,3 +1,4 @@
+// src/app/utils/seedSuperAdmin.ts
 import bcrypt from "bcryptjs";
 import { envVars } from "../config/env";
 import { type IAuthProvider, type IUser, Role } from "../modules/user/user.interface";

@@ -1,3 +1,4 @@
+// src/app/middlewares/checkAuth.ts
 import type { NextFunction, Request, Response } from 'express'
 import httpStatus from 'http-status-codes'
 import { type JwtPayload } from 'jsonwebtoken'
@@ -41,6 +42,7 @@ export const checkAuth =
           `User is ${isUserExist.isActive}`
         )
       }
+      
       if (isUserExist.isDeleted) {
         throw new AppError(httpStatus.BAD_REQUEST, 'User is deleted')
       }

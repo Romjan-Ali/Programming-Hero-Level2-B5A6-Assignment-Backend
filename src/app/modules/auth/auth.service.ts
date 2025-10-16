@@ -1,3 +1,4 @@
+// src/app/modules/auth/auth.service.ts
 import bcryptjs from 'bcryptjs'
 import httpStatus from 'http-status-codes'
 import jwt, { type JwtPayload } from 'jsonwebtoken'

@@ -1,3 +1,4 @@
+// src/app/modules/user/user.interface.ts
 import { Types } from 'mongoose'
 
 export enum Role {

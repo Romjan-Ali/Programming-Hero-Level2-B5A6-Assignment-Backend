@@ -1,3 +1,4 @@
+// src/server.ts
 import app from './app'
 import { envVars } from './app/config/env'
 import connectMongoDB from './app/db/connectMongoDB'

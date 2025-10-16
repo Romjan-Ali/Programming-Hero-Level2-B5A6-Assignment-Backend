@@ -1,3 +1,4 @@
+// src/app/modules/user/user.route.ts
 import { Router } from 'express'
 import { checkAuth } from '../../middlewares/checkAuth'
 import { validateRequest } from '../../middlewares/validateRequest'
